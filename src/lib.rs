@@ -124,6 +124,8 @@ pub mod prelude {
     pub use ::lv2_core::prelude::*;
     #[cfg(feature = "lv2-midi")]
     pub use ::lv2_midi::prelude::*;
+    #[cfg(feature = "lv2-parameters")]
+    pub use ::lv2_parameters::prelude::*;
     #[cfg(feature = "lv2-state")]
     pub use ::lv2_state::*;
     #[cfg(feature = "lv2-time")]
@@ -146,6 +148,9 @@ pub extern crate lv2_core;
 
 #[cfg(feature = "lv2-midi")]
 pub extern crate lv2_midi;
+
+#[cfg(feature = "lv2-parameters")]
+pub extern crate lv2_parameters;
 
 #[cfg(feature = "lv2-state")]
 pub extern crate lv2_state;
