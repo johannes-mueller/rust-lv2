@@ -120,6 +120,8 @@
 pub mod prelude {
     #[cfg(feature = "lv2-atom")]
     pub use ::lv2_atom::prelude::*;
+    #[cfg(feature = "lv2-buf-size")]
+    pub use ::lv2_buf_size::prelude::*;
     #[cfg(feature = "lv2-core")]
     pub use ::lv2_core::prelude::*;
     #[cfg(feature = "lv2-midi")]
