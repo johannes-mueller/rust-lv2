@@ -97,6 +97,7 @@
 //!
 //! * `lv2-atom`: General data IO.
 //! * `lv2-core`: Implementation of the core LV2 specification.
+//! * `lv2-options`: Implementation of the LV2 Options extension.
 //! * `lv2-midi`: MIDI message extension for `lv2-midi`. Support for the [`wmidi` crate](https://crates.io/crates/wmidi) can be enabled with the `wmidi` feature.
 //! * `lv2-state`: Extension for LV2 plugins to store their state.
 //! * `lv2-time`: Specification to describe position in time and passage of time, in both real and musical terms.
@@ -120,12 +121,16 @@
 pub mod prelude {
     #[cfg(feature = "lv2-atom")]
     pub use ::lv2_atom::prelude::*;
+    #[cfg(feature = "lv2-buf-size")]
+    pub use ::lv2_buf_size::prelude::*;
     #[cfg(feature = "lv2-core")]
     pub use ::lv2_core::prelude::*;
     #[cfg(feature = "lv2-midi")]
     pub use ::lv2_midi::prelude::*;
     #[cfg(feature = "lv2-parameters")]
     pub use ::lv2_parameters::prelude::*;
+    #[cfg(feature = "lv2-options")]
+    pub use ::lv2_options::*;
     #[cfg(feature = "lv2-state")]
     pub use ::lv2_state::*;
     #[cfg(feature = "lv2-time")]
@@ -153,6 +158,8 @@ pub extern crate lv2_midi;
 
 #[cfg(feature = "lv2-parameters")]
 pub extern crate lv2_parameters;
+#[cfg(feature = "lv2-options")]
+pub extern crate lv2_options;
 
 #[cfg(feature = "lv2-state")]
 pub extern crate lv2_state;
