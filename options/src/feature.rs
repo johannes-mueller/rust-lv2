@@ -68,3 +68,90 @@ impl LV2Options {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use lv2_atom::prelude::*;
+    use lv2_urid::*;
+    use std::pin::Pin;
+    use urid::*;
+    use super::*;
+
+    struct TestOption1;
+    struct TestOption2;
+    struct TestOption3;
+
+    unsafe impl UriBound for TestOption1 {
+        const URI: &'static [u8] = b"urn:lv2_atom:option#TestOption1\0";
+    }
+    unsafe impl UriBound for TestOption2 {
+        const URI: &'static [u8] = b"urn:lv2_atom:option#TestOption2\0";
+    }
+    unsafe impl UriBound for TestOption3 {
+        const URI: &'static [u8] = b"urn:lv2_atom:option#TestOption3\0";
+    }
+
+    #[derive(URIDCollection)]
+    struct URIDs {
+        test_option_1: URID<TestOption1>,
+        test_option_2: URID<TestOption2>,
+        test_option_3: URID<TestOption3>,
+        atom: AtomURIDCollection,
+    }
+
+    #[test]
+    fn test_option_feature() {
+
+        let mut mapper: Pin<Box<HostMap<HashURIDMapper>>> = Box::pin(HashURIDMapper::new().into());
+        let map_interface = Box::pin(mapper.as_mut().make_map_interface());
+        let map = LV2Map::new(map_interface.as_ref().get_ref());
+        let urids: URIDs = map.populate_collection().unwrap();
+
+        let option_value_1 = 42u32;
+        let option_value_2 = 23.42f32;
+
+        let option_data = Box::new([
+            lv2_sys::LV2_Options_Option {
+                context: 0,
+                subject: 0,
+                key: urids.test_option_1.get(),
+                type_: urids.atom.int.get(),
+                size: 4,
+                value: &option_value_1 as *const u32 as *const std::ffi::c_void
+            },
+            lv2_sys::LV2_Options_Option {
+                context: 0,
+                subject: 0,
+                key: urids.test_option_2.get(),
+                type_: urids.atom.float.get(),
+                size: 4,
+                value: &option_value_2 as *const f32 as *const std::ffi::c_void
+            },
+            lv2_sys::LV2_Options_Option {
+                context: 0,
+                subject: 0,
+                key: 0,
+                type_: 0,
+                size: 0,
+                value: std::ptr::null()
+            }
+        ]);
+
+        let option_ptr = option_data.as_ptr() as *const lv2_sys::LV2_Options_Option;
+
+        let options = unsafe { LV2Options::new(option_ptr).unwrap() };
+        let option_value_1 = options
+            .retrieve_option(urids.test_option_1)
+            .and_then(|atom| atom.read(urids.atom.int, ()));
+        let option_value_2 = options
+            .retrieve_option(urids.test_option_2)
+            .and_then(|atom| atom.read(urids.atom.float, ()));
+        let option_value_3 = options
+            .retrieve_option(urids.test_option_3)
+            .and_then(|atom| atom.read(urids.atom.int, ()));
+
+        assert_eq!(option_value_1, Some(42));
+        assert_eq!(option_value_2, Some(23.42));
+        assert_eq!(option_value_3, None);
+    }
+}
