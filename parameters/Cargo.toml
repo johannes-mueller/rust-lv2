@@ -15,4 +15,4 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 urid = "0.1.0"
-lv2-sys = "1.0.0"
+lv2-sys = "2.0.0"
